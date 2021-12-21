@@ -3,7 +3,8 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import itertools
 import numpy as np
-
+pipeline = 'distilbert-base-nli-mean-tokens'
+model = SentenceTransformer(pipeline)
 
 def getTopMentionByFrequency(corpus, ngram=1, n=None):
     n_gram_range = (ngram, ngram)
@@ -21,8 +22,6 @@ def getTopMentionBySimilarity(doc, ngram=1, stopWords="english"):
     count = CountVectorizer(ngram_range=n_gram_range,
                             stop_words=stopWords).fit([doc])
     candidates = count.get_feature_names()
-    pipeline = 'distilbert-base-nli-mean-tokens'
-    model = SentenceTransformer(pipeline)
     doc_embedding = model.encode([doc])
     candidate_embeddings = model.encode(candidates)
 
@@ -30,7 +29,7 @@ def getTopMentionBySimilarity(doc, ngram=1, stopWords="english"):
         # Calculate distances and extract keywords
         distances = cosine_similarity(doc_embedding, word_embeddings)
         distances_candidates = cosine_similarity(
-            candidate_embeddings, candidate_embeddings)
+            word_embeddings, word_embeddings)
 
         # Get top n words as candidates based on cosine  similarity
         words_idx = list(distances.argsort()[0][-nr_candidates:])
@@ -48,4 +47,4 @@ def getTopMentionBySimilarity(doc, ngram=1, stopWords="english"):
                 candidate = combination
                 min_sim = sim
         return [words_vals[idx] for idx in candidate]
-    return max_sum_sim(doc_embedding, candidate_embeddings, candidates, top_n=5, nr_candidates=20)
+    return max_sum_sim(doc_embedding, candidate_embeddings, candidates, top_n=5, nr_candidates=10)

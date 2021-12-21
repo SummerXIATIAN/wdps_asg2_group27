@@ -3,6 +3,7 @@ import re
 from contractions import contractions_dict
 from nltk.tokenize.toktok import ToktokTokenizer
 from nltk.corpus import stopwords
+from string import digits
 stop = set(stopwords.words('english'))
 tokenizer = ToktokTokenizer()
 
@@ -57,7 +58,7 @@ def remove_special_characters(text, remove_digits=False):
     return text
 
 
-def dataClean(file, URL, NUMBERS, LOWER, EMOJI, CHARACTERS, STOPWORDS, EXPAND,LINES,STOPPOINT):
+def dataClean(file, URL, NUMBERS, LOWER, EMOJI, SPECIALCHARACTERS, STOPWORDS, EXPAND,LINES,STOPPOINT):
     # get the file with dataframe format
     df = file
     # caculate the repeats comments
@@ -84,15 +85,9 @@ def dataClean(file, URL, NUMBERS, LOWER, EMOJI, CHARACTERS, STOPWORDS, EXPAND,LI
         print("**Data Cleaning: Expand Sentence**"+"\n")
         df['processed'] = df['processed'].apply(expand_contractions)
     # remove characters
-    if CHARACTERS:
+    if SPECIALCHARACTERS:
         print("**Data Cleaning: Remove Special Character**"+"\n")
         df['processed'] = df['processed'].apply(remove_special_characters)
-    # Remove numbers
-    if NUMBERS:
-        print("**Data Cleaning: Remove Numbers**"+"\n")
-        df['processed'] = df['processed'].apply(
-            lambda comment: re.sub(r"^\d+\s|\s\d+\s|\s\d+$", " ", comment))
-        #df['processed']=df['processed'].str.replace('d+','')
     # lower case
     if LOWER:
         print("**Data Cleaning: Lower the Character**"+"\n")
@@ -105,5 +100,16 @@ def dataClean(file, URL, NUMBERS, LOWER, EMOJI, CHARACTERS, STOPWORDS, EXPAND,LI
     if EMOJI:
         print("**Data Cleaning: Remove Emojis**"+"\n")
         df["processed"] = df["processed"].apply(remove_emoji)
-    
+     # Remove numbers
+    if NUMBERS:
+        print("**Data Cleaning: Remove Numbers**"+"\n")
+        df['processed'] = df['processed'].apply(
+            lambda comment: re.sub(r"^\d+\s|\s\d+\s|\s\d+$", " ", comment))
+        #df['processed']=df['processed'].str.replace('d+','')
+
+        df['processed'] = df['processed'].apply(
+            lambda comment: re.sub(r"(\d+)", " ", comment))
+        def keepAlpha(text):
+            return text.translate(digits)
+        df['processed'] =df['processed'].apply(keepAlpha)
     return df
