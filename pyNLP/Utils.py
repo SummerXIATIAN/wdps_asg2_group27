@@ -11,8 +11,10 @@ spacy_nlp = spacy.load("en_core_web_sm")
 nltk.download('stopwords')
 stop = set(stopwords.words('english'))
 def export_bar_chart(df,file):
+    plt.figure(1,figsize=(20,20))
     sns.barplot(df['Frequency'],df['Word'])
     plt.savefig(file+'.png')
+    plt.close()
 
 def link_to_fandom (mention):
     newstring ='' 
@@ -31,7 +33,7 @@ def link_to_fandom (mention):
     url = 'https://genshin-impact.fandom.com/wiki/'+newstring
     r = requests.get(url)
     if r.status_code != 404:
-        return True
+        return newstring
     return False
 
 

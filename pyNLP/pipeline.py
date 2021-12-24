@@ -13,6 +13,8 @@ spacy_nlp = spacy.load("en_core_web_sm")
 
 nltk.download('stopwords')
 stop = set(stopwords.words('english'))
+
+
 def compare(str1, str2):
     s1 = str1.split(" ")
     s2 = str2.split(" ")
@@ -24,6 +26,8 @@ def compare(str1, str2):
     if count >= (len(s1)/2+1):
         return True
     return False
+
+
 def spacy_NER_process(text):
     s = spacy_nlp(text)
     result_dic = collections.defaultdict(int)
@@ -33,6 +37,7 @@ def spacy_NER_process(text):
             entity_dic[element.text.lower()] += 1
 
     return result_dic.keys()
+
 
 def top_word_reduction(df):
     #df = df.to_dict('split')['data']
@@ -60,7 +65,6 @@ def top_word_reduction(df):
     return d
 
 
-
 def Top_NER(targetFile):
     import sys
 
@@ -79,14 +83,18 @@ def Top_NER(targetFile):
                    EMOJI=True, SPECIALCHARACTERS=True, STOPWORDS=False, EXPAND=False, LINES=True, STOPPOINT=True)
     # spacy_NER and get the candidates
     df['spacy_NER_items'] = df['processed'].apply(spacy_NER_process)
-    candidates = pd.DataFrame(
+    candidates_b = pd.DataFrame(
         entity_dic.items(), columns=['Word', 'Frequency'])
+    #candidates = pd.DataFrame(top_word_reduction(
+    #    candidates), columns=['Word', 'Frequency'])
     candidates = pd.DataFrame(top_word_reduction(
-        candidates), columns=['Word', 'Frequency'])
-    candidates = candidates[candidates['Frequency'] > 50]
-    Utils.export_bar_chart(candidates,targetFile)
+        candidates_b), columns=['Word', 'Frequency'])
+    candidates = candidates[candidates['Frequency'] > 30]
+    
+    candidates_b=candidates_b.sort_values("Frequency", ascending=False)[:20]
+    Utils.export_bar_chart(candidates_b, targetFile)
     # combine the dictionary
-    output =[]
+    output = []
     main_focus_list = candidates['Word']
     for focus in main_focus_list:
         print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"+"\n")
@@ -95,7 +103,7 @@ def Top_NER(targetFile):
             if focus in text:
                 return True
             return False
-        if Utils.link_to_fandom(focus):
+        if Utils.link_to_fandom(focus)!=False:
             try:
                 df_focus = df.loc[df['spacy_NER_items'].apply(check)]
 
@@ -114,11 +122,12 @@ def Top_NER(targetFile):
                 text = text+";"
                 text = DataClean.remove_stopwords(text)
                 top_bigrams = getTopMentionByFrequency(text.split(";"), 2)
-                fr_top = pd.DataFrame(top_bigrams, columns=["Word", "Frequency"])
+                fr_top = pd.DataFrame(top_bigrams, columns=[
+                                      "Word", "Frequency"])
                 reduced = top_word_reduction(fr_top)
                 fr_top = pd.DataFrame(reduced, columns=['Word', 'Frequency'])
-                
-                fr_top=fr_top.sort_values("Frequency",ascending=False)[:5]
+
+                fr_top = fr_top.sort_values("Frequency", ascending=False)[:5]
                 print(fr_top.head())
                 # similarity
 
@@ -126,14 +135,16 @@ def Top_NER(targetFile):
                 sm_top = getTopMentionBySimilarity(
                     df_focus['processed'].to_string(), ngram=3)
                 print(sm_top)
-                link =  'https://genshin-impact.fandom.com/wiki/'+focus
+                link = 'https://genshin-impact.fandom.com/wiki/'+Utils.link_to_fandom(focus)
 
-                output.append((link,focus,fr_top['Word'].to_list(),sm_top))
-                print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"+"\n"+"\n"+"\n")
+                output.append((link, focus, fr_top['Word'].to_list(), sm_top))
+                print(
+                    "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"+"\n"+"\n"+"\n")
             except:
                 print(focus)
                 continue
-    output_df = pd.DataFrame(output,columns=["LINK","ENTITY","FR_TOP","SM_TOP"])
+    output_df = pd.DataFrame(
+        output, columns=["LINK", "ENTITY", "FR_TOP", "SM_TOP"])
     output_df.to_csv("result"+targetFile)
     # -----------
     # cluster
@@ -141,6 +152,8 @@ def Top_NER(targetFile):
 
 if __name__ == '__main__':
     import sys
-    list =['version_015_full.csv','version_016_full.csv','version_021_full.csv','version_022_full.csv','version_023_full.csv']
+    list = ['version_015_full.csv', 'version_016_full.csv',
+            'version_021_full.csv', 'version_022_full.csv', 'version_023_full.csv']
     for i in list:
+        entity_dic = collections.defaultdict(int)
         Top_NER(i)
