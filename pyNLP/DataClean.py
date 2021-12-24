@@ -74,12 +74,12 @@ def dataClean(file, URL, NUMBERS, LOWER, EMOJI, SPECIALCHARACTERS, STOPWORDS, EX
         df['processed'] = df['processed'].apply(lambda comment: re.sub("\\n"," ",comment))
         df['processed'] = df['processed'].apply(lambda comment: re.sub("(\w+)\: \“[^\”]*\”|(\w+)\:\“[^\”]*\”"," ", comment))
         df['processed'] = df['processed'].apply(lambda comment: re.sub("(\w+)\: \"[^\"]*\"|(\w+)\:\"[^\"]*\""," ", comment))
-        df['processed'] = df['processed'].apply(lambda comment : re.sub(r"\“[^\”]*\”", " ", comment))
-        df['processed'] = df['processed'].apply(lambda comment : re.sub(r"\"[^\"]*\"", " ", comment))
+        df['processed'] = df['processed'].apply(lambda comment : re.sub("\“[^\”]*\”", " ", comment))
+        df['processed'] = df['processed'].apply(lambda comment : re.sub("\"[^\"]*\"", " ", comment))
 
     if STOPPOINT:
         print("**Data Cleaning: Remove Time Break Point"+"\n")
-        df['processed'] = df['processed'].apply(lambda comment : re.sub(r"(\d+)\:(\d+)"," ",comment))
+        df['processed'] = df['processed'].apply(lambda comment : re.sub("(\d+)\:(\d+)"," ",comment))
     # expand words
     if EXPAND:
         print("**Data Cleaning: Expand Sentence**"+"\n")
