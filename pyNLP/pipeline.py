@@ -68,15 +68,12 @@ def top_word_reduction(df):
 def Top_NER(targetFile):
     import sys
 
-    dataPath = '/home/parallels/Desktop/Parallels Shared Folders/Home/Documents/wdps_assignment/final-wdps/data/'
-    #dataPath = '../final-wdps/data/'
-    versionDescriptionFile = 'version_description_015.txt'
+    # dataPath = '/home/parallels/Desktop/Parallels Shared Folders/Home/Documents/wdps_assignment/final-wdps/data/'
+    dataPath = './data/'
     # read file
     print("-------Start Reading Data------"+"\n")
-    result = fileReader(dataPath, targetFile, versionDescriptionFile)
-    file = result[0]
-    description = result[1].lower()
-    main_focus_list = description.split("\n")
+    result = fileReader(dataPath, targetFile)
+    file = result
     # # cleandata
     print("-------Start Cleaning Data------"+"\n")
     df = dataClean(file,  URL=True, NUMBERS=True, LOWER=False,
@@ -146,13 +143,11 @@ def Top_NER(targetFile):
     output_df = pd.DataFrame(
         output, columns=["LINK", "ENTITY", "FR_TOP", "SM_TOP"])
     output_df.to_csv("result"+targetFile)
-    # -----------
-    # cluster
 
 
 if __name__ == '__main__':
     import sys
-    list = ['version_015_full.csv', 'version_016_full.csv',
+    list = ['version_015_full.csv', 'version_016_full.csv','version_020_full.csv',
             'version_021_full.csv', 'version_022_full.csv', 'version_023_full.csv']
     for i in list:
         entity_dic = collections.defaultdict(int)

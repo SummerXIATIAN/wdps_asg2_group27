@@ -9,6 +9,7 @@ In file ```data```.
 In file ```pyNLP```.
 
 - Main pipeline: ```pyNLP/pipeline.py```
+- Execution:  In ```wdps27_final/``` , ```python pyNLP/pipeline.py```
 
 ### Code of Sentiment Analysis
 
@@ -16,6 +17,7 @@ In file ```Sentiment```
 
 - Youtube(ENG) sentiment analysis pipeline: ```senti.py```
 - Bilibili(CHI) sentiment analysis pipeline: ```senti_bili.py```
+- Execution:  In ```wdps27_final/``` , ```python Sentiment/senti.py```
 
 ### ML method to SA
 
