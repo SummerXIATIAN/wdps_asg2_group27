@@ -17,7 +17,7 @@ In file ```Sentiment```
 
 - Youtube(ENG) sentiment analysis pipeline: ```senti.py```
 - Bilibili(CHI) sentiment analysis pipeline: ```senti_bili.py```
-- Execution:  In ```wdps27_final/``` , ```python Sentiment/senti.py```
+- Execution:  ```python Sentiment/senti.py```
 
 ### ML method to SA
 
