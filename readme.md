@@ -9,7 +9,7 @@ In file ```data```.
 In file ```pyNLP```.
 
 - Main pipeline: ```pyNLP/pipeline.py```
-- Execution:  In ```wdps27_final/``` , ```python pyNLP/pipeline.py```
+- Execution:   ```python pyNLP/pipeline.py```
 
 ### Code of Sentiment Analysis
 
